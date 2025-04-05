@@ -1,0 +1,158 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id                String    @id @default(cuid())
+  number            String    @unique
+  model             String
+  manufacturer      String
+  year              Int
+  status            String    @default("active")
+  fuelType          String?
+  capacity          Int?
+  mileage           Int?
+  inspectionDate    DateTime?
+  nextInspectionDate DateTime?
+  insuranceExpiry   DateTime?
+  assignedDriverId  String?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Maintenance {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  type        String
+  description String
+  cost        Float
+  date        DateTime
+  odometer    Int?
+  provider    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inspection {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  inspectorId String?
+  date        DateTime
+  status      String
+  notes       String?
+  items       Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FuelRecord {
+  id        String   @id @default(cuid())
+  vehicleId String
+  date      DateTime
+  amount    Float
+  cost      Float
+  odometer  Int?
+  fuelType  String?
+  location  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String
+  date        DateTime
+  authorId    String?
+  vehicleId   String?
+  data        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  userId      String
+  startDate   DateTime
+  endDate     DateTime
+  purpose     String?
+  status      String   @default("pending")
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Site {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  latitude  Float?
+  longitude Float?
+  type      String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Operation {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      String   @default("planned")
+  vehicleIds  String[]
+  driverIds   String[]
+  siteId      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  vehicleId   String?
+  url         String
+  uploadedBy  String?
+  expiryDate  DateTime?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
